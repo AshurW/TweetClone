@@ -1,8 +1,33 @@
 {% extends 'base.html' %}
-{% block content %}
-Welcome to TweetClone
-{% endblock content %}
 
 {% block head_title %}
 wowowow1
 {% endblock head_title %}
+
+{% block content %}
+Welcome to TweetClone
+
+<div id="tweets">
+    Loading...
+</div>
+
+<script>
+    async function getAllTweets () {
+        const response = await fetch('/tweets')
+        const tweetData = await response.json()
+        console.log(tweetData.response)
+        return tweetData.response  
+    }
+
+    const tweetElement = document.getElementById('tweets')
+    
+    getAllTweets().then(tweets => {
+        tweetElement.innerHTML = ''
+        tweets.forEach(tweet => {
+            const tagItem = `<div class='mb-4' id='tweet-${tweet.id}'><h4>${tweet.content}</h4></div>`
+            tweetElement.innerHTML += tagItem
+        });
+    })
+    
+</script>
+{% endblock content %}
