@@ -11,11 +11,61 @@ wowowow1
     </div>
 </div>
 
+<div class="row mb-3">
+    <div class="col-md-4 mx-auto col-10">
+        <form action="/create-tweet" method="POST" class="form" id="tweet-create-form">
+            {% csrf_token %}
+            <input type="hidden" value="/" name="next" />
+            <textarea name="content" placeholder="Enter your tweet" class="form-control"></textarea>
+            <button type="submit" class="btn btn-primary">
+                Tweet
+            </button>
+        </form>
+    </div>
+</div>
+
 <div class="row" id="tweets">
     Loading...
 </div>
 
 <script>
+
+    const tweetEl = document.getElementById('tweets')
+    loadTweet(tweetEl)
+
+    const tweetCreateFormEl = document.getElementById('tweet-create-form')
+    tweetCreateFormEl.addEventListener('submit', e => {
+        e.preventDefault()
+        const myForm = e.target
+        const myFormData = new FormData(myForm)
+        const url = myForm.getAttribute('action')
+        const method = myForm.getAttribute('method')
+
+        fetch(url, {
+            method: method,
+            // headers: {
+            //     'Content-Type': 'application/json',
+            // },
+            body: myFormData,
+        })
+            .then(res => {
+                console.log(res)
+                loadTweet(tweetEl)
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    })
+
+    function loadTweet(tweetElement) {
+        getAllTweets().then(tweets => {
+            tweetElement.innerHTML = ''
+            tweets.forEach(tweet => {
+                const tagItem = formatTweetElement(tweet)
+                tweetElement.innerHTML += tagItem
+            });
+        })
+    }
 
     function handleDidLike(tweetId, currentCount) {
         console.log(tweetId, currentCount)
@@ -32,22 +82,14 @@ wowowow1
                 </div>`
     }
 
-    async function getAllTweets () {
+    async function getAllTweets() {
         const response = await fetch('/tweets')
         const tweetData = await response.json()
-        console.log(tweetData.response)
-        return tweetData.response  
+        // console.log(tweetData.response)
+        return tweetData.response
     }
 
-    const tweetElement = document.getElementById('tweets')
-    
-    getAllTweets().then(tweets => {
-        tweetElement.innerHTML = ''
-        tweets.forEach(tweet => {
-            const tagItem = formatTweetElement(tweet)
-            tweetElement.innerHTML += tagItem
-        });
-    })
-    
+
+
 </script>
 {% endblock content %}
