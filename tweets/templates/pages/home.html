@@ -76,6 +76,10 @@ wowowow1
                 } else {
                     alert('error please try again')
                 }
+            } else if (xhr.status ===401) {
+                alert('Login please')
+                window.location.href = '/login'
+            } 
             } else if (xhr.status ===500) {
                 alert('server error try again')
             } 
